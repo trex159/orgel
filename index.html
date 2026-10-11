@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Orgelplaner: Liedplan für den Gottesdienst</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <h1>Orgelplaner</h1>
+      <p>Lieder finden und den Liedplan für den Gottesdienst zusammenstellen.</p>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <p id="loading" role="status">Die Lieder werden geladen …</p>
+    <div id="fatal" class="card error" role="alert" hidden></div>
+    <div id="data-notices"></div>
+
+    <div id="app" hidden>
+      <nav class="modes" aria-label="Ansicht wählen">
+        <button type="button" id="mode-plan" class="mode-btn" data-action="mode" data-mode="plan"
+          aria-pressed="true">Liedplan erstellen</button>
+        <button type="button" id="mode-list" class="mode-btn" data-action="mode" data-mode="list"
+          aria-pressed="false">Liederliste</button>
+      </nav>
+
+      <!-- ===== Ansicht: Liedplan erstellen ===== -->
+      <div id="view-plan">
+        <section class="panel narrow" aria-labelledby="plan-heading">
+          <h2 id="plan-heading">Liedplan</h2>
+          <div class="field">
+            <label for="plan-titel">Gottesdienst (freiwillig)</label>
+            <input id="plan-titel" type="text" maxlength="120" autocomplete="off" aria-describedby="titel-hint"
+              placeholder="z. B. 28. Sonntag im Jahreskreis">
+            <p id="titel-hint" class="hint">Erscheint als Überschrift im PDF und im Bild.</p>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="chooser-heading">
+          <h2 id="chooser-heading">1. Welche Stellen kommen vor?</h2>
+          <p class="hint">Setzen Sie bei jeder Stelle, die im Gottesdienst vorkommt, den Haken.</p>
+          <div id="chooser" class="chooser"></div>
+        </section>
+
+        <div class="plan-layout">
+          <section aria-labelledby="slots-heading">
+            <h2 id="slots-heading">2. Lieder zuordnen</h2>
+            <p class="hint">Ziehen Sie ein Lied auf eine Stelle (am Computer) oder tippen Sie bei der Stelle auf „Lied
+              wählen“. Mit „Frei“ erfährt der Organist, dass dort beliebig gespielt werden darf.</p>
+            <ol id="stellen" class="stellen"></ol>
+          </section>
+
+          <section id="browser" class="browser panel" aria-labelledby="browser-heading">
+            <h2 id="browser-heading">3. Lieder auswählen</h2>
+            <div id="target-banner"></div>
+            <div class="field">
+              <label for="b-q">Titel oder Nummer</label>
+              <input id="b-q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"
+                aria-describedby="b-q-hint">
+              <p id="b-q-hint" class="hint">Zum Beispiel „grosser gott“ oder „142“. Die Ergebnisse erscheinen beim
+                Tippen.</p>
+            </div>
+            <div class="field">
+              <label for="b-cat">Kategorie</label>
+              <select id="b-cat"></select>
+            </div>
+            <div class="field">
+              <label for="b-sort">Sortierung</label>
+              <select id="b-sort">
+                <option value="auto">Automatisch (beste Treffer, sonst nach Nummer)</option>
+                <option value="nr">Nach Nummer</option>
+                <option value="titel">Nach Titel (A bis Z)</option>
+                <option value="kategorie">Nach Kategorie</option>
+              </select>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="b-all">
+              <label for="b-all">Auch Lieder suchen, die ich nicht spielen kann (ganzes Verzeichnis)</label>
+            </div>
+            <div id="browser-results" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section class="panel narrow" aria-labelledby="hinweise-heading">
+          <h2 id="hinweise-heading">Besondere Hinweise</h2>
+          <div id="auto-notes"></div>
+          <label for="hinweise" class="hint">Zum Beispiel zum Ablauf, zu musikalischen Besonderheiten oder
+            Absprachen:</label>
+          <textarea id="hinweise" rows="6"></textarea>
+        </section>
+
+        <section class="panel narrow" aria-labelledby="export-heading">
+          <h2 id="export-heading">Plan speichern</h2>
+          <div class="check-row">
+            <input type="checkbox" id="export-alle">
+            <label for="export-alle">Nicht benötigte Stellen im Export mit „entfällt“ anzeigen</label>
+          </div>
+          <div class="toolbar">
+            <button type="button" class="btn btn-primary btn-large" id="export-pdf">Als PDF speichern</button>
+            <button type="button" class="btn btn-primary btn-large" id="export-png">Als Bild (PNG) speichern</button>
+          </div>
+          <p id="export-msg" class="export-msg" role="status"></p>
+          <div class="danger-zone">
+            <button type="button" class="btn btn-danger" id="reset-plan">Plan zurücksetzen</button>
+            <p class="hint">Löscht alle Lieder, Hinweise und Einstellungen dieses Plans. Vorher wird nachgefragt.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===== Ansicht: Liederliste ===== -->
+      <div id="view-list" hidden>
+        <section class="panel" aria-labelledby="list-heading">
+          <h2 id="list-heading">Alle spielbaren Lieder</h2>
+          <div class="filters">
+            <div class="field">
+              <label for="l-q">Titel oder Nummer</label>
+              <input id="l-q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div class="field">
+              <label for="l-cat">Kategorie</label>
+              <select id="l-cat"></select>
+            </div>
+            <div class="field">
+              <label for="l-sort">Sortierung</label>
+              <select id="l-sort">
+                <option value="nr">Nach Nummer</option>
+                <option value="titel">Nach Titel (A bis Z)</option>
+                <option value="kategorie">Nach Kategorie</option>
+              </select>
+            </div>
+          </div>
+          <div class="check-row">
+            <input type="checkbox" id="l-desc">
+            <label for="l-desc">Absteigend sortieren</label>
+          </div>
+          <p id="list-count" class="list-count" role="status"></p>
+          <div class="toolbar">
+            <button type="button" class="btn btn-primary btn-large" id="list-pdf">Angezeigte Liste als PDF
+              speichern</button>
+          </div>
+          <p id="list-msg" class="export-msg" role="status"></p>
+          <p id="list-empty" class="empty" hidden>Keine Lieder gefunden. Bitte Suche oder Kategorie ändern.</p>
+          <table class="song-table">
+            <caption class="sr-only">Spielbare Lieder</caption>
+            <thead>
+              <tr>
+                <th scope="col" data-col="nr"><button type="button" data-action="sort" data-sort="nr">Nummer <span
+                      class="sort-ind" aria-hidden="true"></span></button></th>
+                <th scope="col" data-col="titel"><button type="button" data-action="sort" data-sort="titel">Titel <span
+                      class="sort-ind" aria-hidden="true"></span></button></th>
+                <th scope="col" data-col="kategorie"><button type="button" data-action="sort"
+                    data-sort="kategorie">Kategorie <span class="sort-ind" aria-hidden="true"></span></button></th>
+              </tr>
+            </thead>
+            <tbody id="list-body"></tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="vendor/jspdf.umd.min.js" defer></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
