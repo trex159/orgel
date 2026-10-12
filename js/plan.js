@@ -7,7 +7,7 @@ import {
 	formatNumber
 } from './search.js';
 /** Feste Reihenfolge der liturgischen Stellen. Sie ändert sich nie. */
-export const STELLEN = ['Eingang', 'Kyrie', 'Gloria', 'Zwischengesang', 'Halleluja', 'Christusruf', 'Credo', 'Gabenbereitung', 'Sanctus', 'Agnus Dei', 'Kommunion', 'Danksagung', 'Schluss', ];
+export const STELLEN = ['Eingang', 'Kyrie', 'Gloria', 'Zwischengesang', 'Halleluja', 'Christusruf', 'Credo', 'Fürbitten', 'Gabenbereitung', 'Sanctus', 'Ruf im Hochgebet', 'Agnus Dei', 'Kommunion', 'Danksagung', 'Schluss', ];
 const STORAGE_KEY = 'orgelplaner.plan.v1';
 export function defaultPlan() {
 	const stellen = {};
